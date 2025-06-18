@@ -1,12 +1,22 @@
-// src/pages/Login.jsx
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FiLogIn } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/header";
 import Footer from "../../components/layout/footer";
+import { useLoginMutation } from "../../api/auth";
+import { useLocalStorage } from "../../hooks/useLocalStirage"; // adjust path if needed
+import { useState } from "react";
+import { toast } from "react-toastify";
+
 const Login = () => {
   const navigate = useNavigate();
+  const [login, { isLoading }] = useLoginMutation();
+  const { setItem: setCurrentUser } = useLocalStorage("currUser");
+  const { setItem: setAcessToken } = useLocalStorage("accessToken");
+  const { setItem: setRefreshToken } = useLocalStorage("refreshToken");
+
+  const [error, setError] = useState("");
 
   const initialValues = {
     username: "",
@@ -18,11 +28,21 @@ const Login = () => {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log("Logging in with:", values);
-    setSubmitting(false);
-    // TODO: replace with real auth
-    navigate("/dashboard");
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      const response = await login(values).unwrap();
+        setCurrentUser(response.user);
+        console.log("Login response:", response);
+      setAcessToken(response.access);
+      setRefreshToken(response.refresh);
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } catch (err) {
+      toast.error("Login failed:", err);
+      setError("Invalid username or password");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -38,6 +58,12 @@ const Login = () => {
               Please log in to access internal documents
             </p>
           </div>
+
+          {error && (
+            <div className="text-sm text-red-600 text-center font-medium">
+              {error}
+            </div>
+          )}
 
           <Formik
             initialValues={initialValues}
@@ -85,10 +111,16 @@ const Login = () => {
                 <div>
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full flex items-center justify-center py-3 px-6 rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 transition shadow-md"
+                    disabled={isSubmitting || isLoading}
+                    className={`w-full flex items-center justify-center py-3 px-6 rounded-xl text-white font-medium transition shadow-md
+    ${
+      isSubmitting || isLoading
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700"
+    }`}
                   >
-                    <FiLogIn className="mr-2" /> Log In
+                    <FiLogIn className="mr-2" />
+                    {isLoading ? "Logging in..." : "Log In"}
                   </button>
                 </div>
               </Form>
