@@ -8,7 +8,11 @@ const Header = () => {
       <div className="px-4">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
-            <img src={TeamWorkLogo} alt="TeamWork Company" className="h-10" />
+<img
+  src={TeamWorkLogo}
+  alt="TeamWork Company"
+  className="h-20 w-20 rounded-full object-cover border-4 border-white shadow-md"
+/>
             <span className="ml-3 text-xl font-bold text-gray-900 hidden md:inline">
               TeamWork Software Company
             </span>
