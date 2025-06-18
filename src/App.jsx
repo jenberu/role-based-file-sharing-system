@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LandingPge from "./pages/HomePage";
+import NotFound from "./pages/NotFoundPage";
+import Login from "./pages/auth/Login";
+
 
 function App() {
 
@@ -8,8 +11,11 @@ function App() {
      <Router>
         <Routes>
           {/* <Route path="/user/register" element={<SignUp />} />
-          <Route path="/user/login" element={<Login />} /> */}
+          */}
           <Route path="/" element={<LandingPge />} />
+          <Route path="/login" element={<Login />} />
+          
+          <Route path="*" element={<NotFound />} />
          </Routes>
 
           </Router>
