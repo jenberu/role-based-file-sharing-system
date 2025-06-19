@@ -19,7 +19,7 @@ const Navbar = () => {
   };
   const handleThemeToggle = () => dispatch(toggleTheme());
   return (
-    <div className="w-full h-16 top-0 left-0 bg-blue-900 text-white px-6 py-3 flex items-center justify-between shadow-md fixed">
+    <div className="w-full h-16 top-0 z-20 left-0 bg-blue-900 text-white px-6 py-3 flex items-center justify-between shadow-md fixed">
       <div>
         <Link to="/dashboard" className="text-xl font-bold text-white">
           TeamWork Docs
