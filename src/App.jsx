@@ -4,7 +4,7 @@ import NotFound from "./pages/NotFoundPage";
 import Login from "./pages/auth/Login";
 import DashboardLayout from "./pages/DashboardLayout";
 import DashBoard from "./components/layout/dashboard";
-
+import ManageUser from "./pages/auth/manageUser";
 function App() {
   return (
     <>
@@ -15,7 +15,8 @@ function App() {
           <Route path="/" element={<LandingPge />} />
           <Route path="/login" element={<Login />} />
           <Route element={<DashboardLayout />}>
-            <Route path="/dashboard/*" element={<DashBoard />} />
+            <Route path="/dashboard" element={<DashBoard />} />
+            <Route path="/admin/manage_employees" element={<ManageUser />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
