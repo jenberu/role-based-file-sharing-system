@@ -37,7 +37,7 @@ const Sidebar = ({ role }) => {
   }, []);
 
   return (
-    <div className="h-[calc(100vh-4rem)] top-16 w-64 bg-blue-900 text-white flex flex-col justify-between fixed">
+    <div className="h-[calc(100vh-4rem)] top-16 w-64 bg-blue-900 text-white flex flex-col justify-between fixed z-10">
       <div className="space-y-4 p-6">
         <nav className="flex flex-col space-y-2">
           <Link
@@ -46,7 +46,7 @@ const Sidebar = ({ role }) => {
               pathname == "/dashboard" ? "bg-yellow-600" : "hover:bg-yellow-600"
             }`}
           >
-            <FiHome />
+            <FiHome size={24} />
             <span className="text-xl">Dashboard</span>
           </Link>
 
@@ -56,20 +56,31 @@ const Sidebar = ({ role }) => {
               pathname == "/documents" ? "bg-yellow-600" : "hover:bg-yellow-600"
             }`}
           >
-            <FiFileText />
+            <FiFileText size={24} />
             <span className="text-xl">Documents</span>
           </Link>
 
           {(role === "ADMIN" || role === "HR") && (
-            <Link
-              to="/users"
-              className={`flex items-center space-x-2  p-2 rounded  ${
-                pathname == "/users" ? "bg-yellow-600" : "hover:bg-yellow-600"
-              }`}
-            >
-              <FiUsers />
-              <span className="text-xl">User Management</span>
-            </Link>
+            <div className={`flex items-center justify-between ${
+                  pathname === "/admin/manage_employees"
+                    ? "bg-yellow-600"
+                    : "hover:bg-yellow-600"
+                }`}>
+              <Link
+                to="/admin/manage_employees"
+                className={`flex items-center space-x-2 p-2 rounded `}
+              >
+                <FiUsers size={24} />
+                <span className="text-xl">Employees</span>
+              </Link>
+
+              <Link
+                to="/admin/add_employee"
+                className="ml-4 text-sm  text-white px-2 py-1 rounded"
+              >
+                + Add
+              </Link>
+            </div>
           )}
         </nav>
       </div>
@@ -84,7 +95,7 @@ const Sidebar = ({ role }) => {
           }`}
         >
           <div className="flex items-center space-x-2">
-            <FiBell />
+            <FiBell size={24} />
             <span className="text-xl">Notifications</span>
           </div>
           {notificationList.length > 0 && (
@@ -97,7 +108,7 @@ const Sidebar = ({ role }) => {
           onClick={handleLogout}
           className="flex items-center space-x-2 hover:bg-yellow-700 p-2 rounded w-full"
         >
-          <FiLogOut />
+          <FiLogOut size={24} />
           <span className="text-xl">Logout</span>
         </button>
       </div>

@@ -14,7 +14,7 @@ const LandingPge = () => {
 
       {/* Hero Section */}
       <div
-        className="mx-8 px-6 border sm:px-6 lg:px-8 py-16"
+        className="mx-8 px-6  sm:px-6 lg:px-8 py-16"
         style={{ height: "calc(100vh - 80px)" }}
       >
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
