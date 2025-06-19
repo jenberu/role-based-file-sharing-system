@@ -1,35 +1,42 @@
 // src/api/authApi.js
-import { createApi } from '@reduxjs/toolkit/query/react';
-import createBaseQueryWithReauth from './index';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import createBaseQueryWithReauth from "./index";
 
 const baseQueryWithReauth = createBaseQueryWithReauth(
-  'http://127.0.0.1:8000/api/auth'
+  "http://127.0.0.1:8000/api/auth"
 );
 
 export const authApi = createApi({
-  reducerPath: 'authApi',
+  reducerPath: "authApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['User'],
+  tagTypes: ["User"],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/login/',
-        method: 'POST',
+        url: "/login/",
+        method: "POST",
         body: credentials,
       }),
     }),
 
     register: builder.mutation({
       query: (body) => ({
-        url: '/register/',
-        method: 'POST',
+        url: "/register/",
+        method: "POST",
         body,
       }),
     }),
 
     getMe: builder.query({
       query: () => ({
-        url: '/me/',
+        url: "/me/",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
+     getUsers: builder.query({
+      query: () => ({
+        url: '/users/',
         method: 'GET',
       }),
       providesTags: ['User'],
@@ -37,11 +44,12 @@ export const authApi = createApi({
 
     logout: builder.mutation({
       query: () => ({
-        url: '/logout/',
-        method: 'POST',
+        url: "/logout/",
+        method: "POST",
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ["User"],
     }),
+  
   }),
 });
 
@@ -50,4 +58,5 @@ export const {
   useRegisterMutation,
   useGetMeQuery,
   useLogoutMutation,
+   useGetUsersQuery,
 } = authApi;
