@@ -1,6 +1,6 @@
 import { useLocalStorage } from "../../hooks/useLocalStirage";
 import AdminDashboard from "./adminDashboard";
-import EmployeeDashboard from "./employeeDashboard";
+import EmployeeDashboard from "./employeDashboard";
 const Dashboard = () => {
   const { getItem } = useLocalStorage("currUser");
   const user = getItem();
