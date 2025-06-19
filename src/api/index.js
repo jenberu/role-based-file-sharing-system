@@ -35,7 +35,7 @@ const createBaseQueryWithReauth = (baseUrl) => {
           }
 
           // Attempt refresh
-          const refreshResult = await fetch(baseUrl + "/token/refresh/", {
+          const refreshResult = await fetch("http://localhost:8000/api/auth/token/refresh/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
