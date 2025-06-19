@@ -1,6 +1,6 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
-
+import { useNavigate } from "react-router-dom";
 const mutex = new Mutex();
 
 const createBaseQueryWithReauth = (baseUrl) => {
@@ -17,13 +17,14 @@ const createBaseQueryWithReauth = (baseUrl) => {
 
   return async (args, api, extraOptions) => {
     await mutex.waitForUnlock();
-    
+
     let result = await rawBaseQuery(args, api, extraOptions);
 
     // Token expired, try refresh
     if (result.error && result.error.status === 401) {
       if (!mutex.isLocked()) {
         const release = await mutex.acquire();
+        const navigate = useNavigate();
 
         try {
           const refreshToken = localStorage.getItem("refreshToken");
@@ -35,13 +36,16 @@ const createBaseQueryWithReauth = (baseUrl) => {
           }
 
           // Attempt refresh
-          const refreshResult = await fetch("http://localhost:8000/api/auth/token/refresh/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ refresh: refreshToken }),
-          });
+          const refreshResult = await fetch(
+            "http://localhost:8000/api/auth/token/refresh/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ refresh: refreshToken }),
+            }
+          );
 
           const refreshData = await refreshResult.json();
 
@@ -53,14 +57,14 @@ const createBaseQueryWithReauth = (baseUrl) => {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("currUser");
-            window.location.href = "/login";
+            navigate("/login");
           }
         } catch (error) {
           console.error("Refresh token error:", error);
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("currUser");
-          window.location.href = "/login";
+          navigate("/login");
         } finally {
           release();
         }

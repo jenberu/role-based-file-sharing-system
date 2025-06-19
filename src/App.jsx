@@ -12,8 +12,6 @@ function App() {
     <>
       <Router>
         <Routes>
-          {/* <Route path="/user/register" element={<SignUp />} />
-           */}
           <Route path="/" element={<LandingPge />} />
           <Route path="/login" element={<Login />} />
           <Route element={<DashboardLayout />}>

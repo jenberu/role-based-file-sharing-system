@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation ,useNavigate} from "react-router-dom";
 import { FiHome, FiUsers, FiFileText, FiLogOut, FiBell } from "react-icons/fi";
 import { useLocalStorage } from "../../hooks/useLocalStirage";
 import { useState, useEffect } from "react";
@@ -7,13 +7,14 @@ import { toast } from "react-toastify";
 
 const Sidebar = ({ role }) => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { removeItem } = useLocalStorage("currUser");
   const [open, setOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [notificationList, setNotificationList] = useState([]);
   const handleLogout = () => {
     removeItem();
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
   const handleNotificationClick = () => setOpen(true);
   const handleClose = () => setOpen(false);
