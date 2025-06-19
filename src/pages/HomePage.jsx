@@ -7,6 +7,7 @@ import { FEATURES, POLICIES, FEATURES_ICON } from "../utils/landingConstants";
 import { motion } from "framer-motion";
 import HeroImage from "../assets/hero_image_1.jpg";
 
+
 const LandingPge = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-blue-50 to-white pt-20">

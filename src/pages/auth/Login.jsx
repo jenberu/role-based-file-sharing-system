@@ -25,19 +25,19 @@ const Login = () => {
     username: Yup.string().required("Username is required"),
     password: Yup.string().required("Password is required"),
   });
-
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await login(values).unwrap();
       setCurrentUser(response.user);
-      console.log("Login response:", response);
-      localStorage.setItem("accessToken",response.access);
-      localStorage.setItem("refreshToken",response.refresh);
+      localStorage.setItem("accessToken", response.access);
+      localStorage.setItem("refreshToken", response.refresh);
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (err) {
-      toast.error("Login failed:", err);
-      setError("Invalid username or password");
+      const message =
+        err?.data?.detail || "Invalid username or password. Please try again.";
+      toast.error(message);
+      setError(message);
     } finally {
       setSubmitting(false);
     }
