@@ -25,6 +25,7 @@ export const authApi = createApi({
         method: "POST",
         body,
       }),
+      invalidatesTags: ["User"],
     }),
 
     getMe: builder.query({
@@ -34,12 +35,12 @@ export const authApi = createApi({
       }),
       providesTags: ["User"],
     }),
-     getUsers: builder.query({
+    getUsers: builder.query({
       query: () => ({
-        url: '/users/',
-        method: 'GET',
+        url: "/users/",
+        method: "GET",
       }),
-      providesTags: ['User'],
+      providesTags: ["User"],
     }),
 
     logout: builder.mutation({
@@ -49,7 +50,17 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["User"],
     }),
-  
+    changePassword: builder.mutation({
+      query: (body) => ({
+        url: "change-password/",
+        method: "POST",
+        body,
+      }),
+    }),
+    getTotalUsers: builder.query({
+      query: () => "/total-users/",
+      providesTags: ["User"],
+    }),
   }),
 });
 
@@ -58,5 +69,7 @@ export const {
   useRegisterMutation,
   useGetMeQuery,
   useLogoutMutation,
-   useGetUsersQuery,
+  useGetUsersQuery,
+  useChangePasswordMutation,
+  useGetTotalUsersQuery,
 } = authApi;
