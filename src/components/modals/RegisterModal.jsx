@@ -44,17 +44,24 @@ export default function RegisterModal({ onClose }) {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       await register(values).unwrap();
-      toast.success("🎉 Registration successful!");
+      toast.success("Registration successful!");
       onClose();
     } catch (err) {
-      if (err.data) {
-        Object.entries(err.data).forEach(([key, message]) => {
-          toast.error(
-            `${key}: ${Array.isArray(message) ? message.join(" ") : message}`
-          );
-        });
+      const errorData = err?.data;
+      if (errorData) {
+        if (typeof errorData === "string") {
+          toast.error(errorData);
+        } else {
+          Object.entries(errorData).forEach(([field, messages]) => {
+            if (Array.isArray(messages)) {
+              messages.forEach((msg) => toast.error(`${field}: ${msg}`));
+            } else {
+              toast.error(`${field}: ${messages}`);
+            }
+          });
+        }
       } else {
-        toast.error("Registration failed");
+        toast.error("Something went wrong. Please try again.");
       }
     } finally {
       setSubmitting(false);

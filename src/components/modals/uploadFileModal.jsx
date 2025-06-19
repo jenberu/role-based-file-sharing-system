@@ -4,21 +4,10 @@ import * as Yup from "yup";
 import { useUploadDocumentMutation } from "../../api/fileApi";
 import { useGetDepartmentsQuery } from "../../api/departmentApi";
 import { useLocalStorage } from "../../hooks/useLocalStirage";
-const CATEGORY_OPTIONS = [
-  "policy",
-  "payroll",
-  "leave",
-  "report",
-  "project",
-  "training",
-  "announcement",
-  "template",
-  "hr",
-  "legal",
-  "other",
-];
+import { toast } from "react-toastify";
+import { FILE_CATEGORY } from "../../utils/constant";
 
-const UploadFileModal = ({onClose }) => {
+const UploadFileModal = ({ onClose }) => {
   const { getItem: getCurrentUser } = useLocalStorage("currUser");
   const isAdmin = getCurrentUser()?.role === "ADMIN";
   console.log("isAdmin:", isAdmin);
@@ -53,10 +42,13 @@ const UploadFileModal = ({onClose }) => {
 
       try {
         await uploadDocs(formData).unwrap();
+        toast.success("Document uploaded successfully!");
         resetForm();
         onClose();
       } catch (err) {
-        console.error(err);
+        const errorMessage =
+          err?.data?.error || "Failed to upload document. Please try again.";
+        toast.error(errorMessage);
       }
     },
   });
@@ -118,7 +110,7 @@ const UploadFileModal = ({onClose }) => {
               value={formik.values.category}
               className="w-full mt-1 p-2 border rounded"
             >
-              {CATEGORY_OPTIONS.map((cat) => (
+              {FILE_CATEGORY.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </option>
