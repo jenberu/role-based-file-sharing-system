@@ -51,9 +51,9 @@ const Sidebar = ({ role }) => {
           </Link>
 
           <Link
-            to="/documents"
+            to="/dashboard/manage_files"
             className={`flex items-center space-x-2 p-2 rounded  ${
-              pathname == "/documents" ? "bg-yellow-600" : "hover:bg-yellow-600"
+              pathname == "/dashboard/manage_files" ? "bg-yellow-600" : "hover:bg-yellow-600"
             }`}
           >
             <FiFileText size={24} />
