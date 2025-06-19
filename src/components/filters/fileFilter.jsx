@@ -1,33 +1,46 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import {FILTER_DATE} from "../../utils/constant";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FILE_CATEGORY, FILTER_DATE} from "../../utils/constant";
+import { useLocalStorage } from "../../hooks/useLocalStirage";
 import { useGetDepartmentsQuery } from "../../api/departmentApi";
 import { CircularProgress } from "@mui/material";
 
-const UserFilter = ({ onFilter }) => {
+const FileFilter = ({ onFilter }) => {
+  const { getItem: gteCurrentUser } = useLocalStorage("currUser");
+  const { data: departments = [], isLoading: deptLoading } =
+    useGetDepartmentsQuery();
+  const currentUser = gteCurrentUser();
   const [filters, setFilters] = useState({
+    category: "All",
+    uploadedDate: "Any date",
     department: "All",
-    createdDate: "Any date",
   });
-    const { data: departments = [], isLoading: deptLoading } =
-      useGetDepartmentsQuery();
-  const [isDeptOpen, setIsDeptOpen] = useState(false);
-  const [isDateOpen, setIsDateOpen] = useState(false);
+  const [isCatOpen, setIsCatOpen] = useState(false);
+  const [isUploadDateOpen, setIsUploadDateOpen] = useState(false);
+  const handleCategoryFilter = (category) => {
+    const newFilters = { ...filters, category };
+    setFilters(newFilters);
+    onFilter(newFilters);
+    setIsCatOpen(false);
+  };
+  const handleUploadedDateFilter = (date) => {
+    const newFilters = { ...filters, uploadedDate: date };
+    setFilters(newFilters);
+    onFilter(newFilters);
+    setIsUploadDateOpen(false);
+  };
   const handleDepartmentFilter = (department) => {
     const newFilters = { ...filters, department };
     setFilters(newFilters);
     onFilter(newFilters);
-    setIsDeptOpen(false);
-  };
-  const handleDateFilter = (date) => {
-    const newFilters = { ...filters, createdDate: date };
-    setFilters(newFilters);
-    onFilter(newFilters);
-    setIsDateOpen(false);
   };
   const clearFilters = () => {
-    const newFilters = { department: "All", createdDate: "Any date" };
+    const newFilters = {
+      category: "All",
+      uploadedDate: "Any date",
+      department: "All",
+    };
     setFilters(newFilters);
     onFilter(newFilters);
   };
@@ -38,7 +51,6 @@ const UserFilter = ({ onFilter }) => {
       </div>
     );
   }
-
   return (
     <div className="rounded-md bg-gray-100 dark:bg-gray-800 p-4 shadow-md w-full">
       {/* Header */}
@@ -55,31 +67,51 @@ const UserFilter = ({ onFilter }) => {
       </div>
 
       {/* Department Dropdown */}
+      {currentUser?.role === "ADMIN" && (
+        <div className="mb-4">
+          <h3 className="text-base font-semibold text-gray-700 dark:text-white mb-2">
+            By Department
+          </h3>
+          <select
+            value={filters.department}
+            onChange={(e) => handleDepartmentFilter(e.target.value)}
+            className="w-full px-3 py-2 rounded border border-gray-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+          >
+            <option value="All">All</option>
+            {departments.map((dept) => (
+              <option key={dept.id} value={dept.name}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="mb-4 relative">
         <h3 className="text-base font-semibold text-gray-700 dark:text-white mb-2">
-          By department
+          By category
         </h3>
         <button
-          onClick={() => setIsDeptOpen(!isDeptOpen)}
+          onClick={() => setIsCatOpen(!isCatOpen)}
           className="w-full flex  cursor-pointer justify-between items-center px-3 py-2 rounded border border-gray-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
         >
-          <span>{filters.department}</span>
-          {isDeptOpen ? <FiChevronUp /> : <FiChevronDown />}
+          <span>{filters.category}</span>
+          {isCatOpen ? <FiChevronUp /> : <FiChevronDown />}
         </button>
 
-        {isDeptOpen && (
+        {isCatOpen && (
           <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg rounded-md max-h-60 overflow-auto">
-            {departments.map((department) => (
+            {FILE_CATEGORY.map((category) => (
               <button
-                key={department.id}
+                key={category}
                 className={`w-full text-left px-3 py-2  cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-600 ${
-                  filters.department === department.name
+                  filters.category === category
                     ? "bg-yellow-500 text-white font-medium"
                     : "text-gray-800 dark:text-white"
                 }`}
-                onClick={() => handleDepartmentFilter(department.name)}
+                onClick={() => handleCategoryFilter(category)}
               >
-                {department.name || "N/A"}
+                {category}
               </button>
             ))}
           </div>
@@ -93,24 +125,24 @@ const UserFilter = ({ onFilter }) => {
         </h3>
 
         <button
-          onClick={() => setIsDateOpen(!isDateOpen)}
-          className="w-full flex justify-between  cursor-pointer items-center px-3 py-2 rounded border border-gray-300 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+          onClick={() => setIsUploadDateOpen(!isUploadDateOpen)}
+          className="w-full flex justify-between  cursor-pointer items-center px-3 py-2 rounded border border-gray-100 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
         >
-          <span>{filters.createdDate}</span>
-          {isDateOpen ? <FiChevronUp /> : <FiChevronDown />}
+          <span>{filters.uploadedDate}</span>
+          {isUploadDateOpen ? <FiChevronUp /> : <FiChevronDown />}
         </button>
 
-        {isDateOpen && (
+        {isUploadDateOpen && (
           <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 shadow-lg rounded-md max-h-60 overflow-auto">
             {FILTER_DATE.map((date) => (
               <button
                 key={date}
                 className={`w-full text-left px-3 py-2  cursor-pointer hover:bg-yellow-100 dark:hover:bg-yellow-600 ${
-                  filters.createdDate === date
+                  filters.uploadedDate === date
                     ? "bg-yellow-500 text-white font-medium"
                     : "text-gray-800 dark:text-white"
                 }`}
-                onClick={() => handleDateFilter(date)}
+                onClick={() => handleUploadedDateFilter(date)}
               >
                 {date}
               </button>
@@ -122,8 +154,8 @@ const UserFilter = ({ onFilter }) => {
   );
 };
 
-UserFilter.propTypes = {
+FileFilter.propTypes = {
   onFilter: PropTypes.func.isRequired,
 };
 
-export default UserFilter;
+export default FileFilter;
