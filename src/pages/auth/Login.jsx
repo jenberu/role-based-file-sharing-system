@@ -13,8 +13,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
   const { setItem: setCurrentUser } = useLocalStorage("currUser");
-  const { setItem: setAcessToken } = useLocalStorage("accessToken");
-  const { setItem: setRefreshToken } = useLocalStorage("refreshToken");
 
   const [error, setError] = useState("");
 
@@ -31,10 +29,10 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await login(values).unwrap();
-        setCurrentUser(response.user);
-        console.log("Login response:", response);
-      setAcessToken(response.access);
-      setRefreshToken(response.refresh);
+      setCurrentUser(response.user);
+      console.log("Login response:", response);
+      localStorage.setItem("accessToken",response.access);
+      localStorage.setItem("refreshToken",response.refresh);
       toast.success("Login successful!");
       navigate("/dashboard");
     } catch (err) {
