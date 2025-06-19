@@ -110,7 +110,7 @@ const Login = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting || isLoading}
-                    className={`w-full flex items-center justify-center py-3 px-6 rounded-xl text-white font-medium transition shadow-md
+                    className={`w-full flex items-center justify-center cursor-pointer py-3 px-6 rounded-xl text-white font-medium transition shadow-md
     ${
       isSubmitting || isLoading
         ? "bg-blue-400 cursor-not-allowed"

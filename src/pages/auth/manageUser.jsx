@@ -28,36 +28,48 @@ const ManageUser = () => {
           u.department?.name?.toLowerCase() === filters.department.toLowerCase()
       );
     }
-
     // Filter by join date
     if (filters.createdDate && filters.createdDate !== "Any date") {
       const today = new Date();
-      let targetDate = new Date();
+      let targetDate = null;
+
       switch (filters.createdDate) {
         case "Today":
-          targetDate.setDate(today.getDate() - 1);
-
+          targetDate = new Date(today);
+          targetDate.setHours(0, 0, 0, 0);
+          filtered = filtered.filter((user) => {
+            const joinedDate = new Date(user.date_joined);
+            return (
+              joinedDate >= targetDate &&
+              joinedDate <= new Date(targetDate.getTime() + 86400000 - 1)
+            ); // till end of day
+          });
           break;
+
         case "Past 7 days":
+          targetDate = new Date(today);
           targetDate.setDate(today.getDate() - 7);
+          filtered = filtered.filter(
+            (user) => new Date(user.date_joined) >= targetDate
+          );
           break;
+
         case "This month":
-          targetDate.setMonth(today.getMonth() - 1);
+          targetDate = new Date(today.getFullYear(), today.getMonth(), 1);
+          filtered = filtered.filter(
+            (user) => new Date(user.date_joined) >= targetDate
+          );
           break;
+
         case "This year":
-          targetDate.setFullYear(today.getFullYear() - 1);
-
+          targetDate = new Date(today.getFullYear(), 0, 1);
+          filtered = filtered.filter(
+            (user) => new Date(user.date_joined) >= targetDate
+          );
           break;
+
         default:
-          targetDate = null;
-
           break;
-      }
-
-      if (targetDate) {
-        filtered = filtered.filter(
-          (user) => new Date(user.date_joined) >= targetDate
-        );
       }
     }
 
@@ -65,7 +77,7 @@ const ManageUser = () => {
   };
 
   const handleUserClick = (id) => {
-    navigate(`/admin/users/${id}/edit`);
+    navigate(`/users/${id}/edit`);
   };
 
   const handleAddUser = (e) => {
@@ -131,7 +143,7 @@ const ManageUser = () => {
         <h1>User Management</h1>
         <button
           onClick={handleAddUser}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center cursor-pointer"
         >
           Add User <span className="text-xl ml-2">+</span>
         </button>
