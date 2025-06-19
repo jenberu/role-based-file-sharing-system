@@ -9,7 +9,6 @@ import {
 } from "@table-library/react-table-library/table";
 import { useTheme } from "@table-library/react-table-library/theme";
 import { useSort } from "@table-library/react-table-library/sort";
-import MaterialButton from "@mui/material/Button";
 import UnfoldMoreOutlinedIcon from "@mui/icons-material/UnfoldMoreOutlined";
 import KeyboardArrowUpOutlinedIcon from "@mui/icons-material/KeyboardArrowUpOutlined";
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
@@ -98,15 +97,15 @@ const UserTable = ({ data, columns }) => {
             "Username",
             "FirstName",
             "LastName",
-            "Role",
             "Email",
+            "Role",
             "Department",
             "Created At",
             "Last Login",
           ],
         ];
 
-        exportToPDF(pdfdata, head, "Departments");
+        exportToPDF(pdfdata, head, "Users");
       } else if (action === "delete") {
         deleteSelectedItems();
       }
@@ -173,129 +172,136 @@ const UserTable = ({ data, columns }) => {
       },
     }
   );
-  const resize = { minWidth: 60, resizerHighlight: "#dde2eb" };
+  const resize = { minWidth: 40, resizerHighlight: "#dde2eb" };
 
   return (
     <>
-      <div className="action-search-container">
-        <div className="search-container">
-          <label htmlFor="search">
-            Search :&nbsp;
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex items-center w-[50%]  gap-2">
+            <label
+              htmlFor="search"
+              className="text-sm font-medium text-gray-700"
+            >
+              Search:
+            </label>
             <input
               id="search"
               type="text"
-              placeholder=" Search by Name"
+              placeholder="Search by Name"
               value={searchTerm}
               onChange={handleSearch}
+              className="border border-gray-300  w-[100%] rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:border-blue-400"
             />
-          </label>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="action-select"
+              className="text-sm font-medium text-gray-700"
+            >
+              Actions:
+            </label>
+            <select
+              id="action-select"
+              value={action}
+              onChange={(e) => setAction(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring focus:border-blue-400"
+            >
+              <option value="" disabled>
+                Select Action
+              </option>
+              <option value="export_csv">Export to CSV</option>
+              <option value="export_pdf">Export to PDF</option>
+              <option value="delete">Delete Selected</option>
+            </select>
+            <button
+              onClick={handleAction}
+              className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+            >
+              Go
+            </button>
+            <span className="text-sm text-gray-600">
+              {`${selectedItems.length} of ${data.nodes.length} Selected`}
+            </span>
+          </div>
         </div>
-        <div className="action-container">
-          <label htmlFor="action-select"> Actions: </label>
-          <select
-            id="action-select"
-            value={action}
-            onChange={(e) => setAction(e.target.value)}
+
+        {/* Table */}
+        <div className="overflow-visible mt-4">
+          <Table
+            data={filteredData}
+            theme={theme}
+            sort={sort}
+            layout={layout}
+            select={select}
+            pagination={pagination}
           >
-            <option value="" disabled selected>
-              Select Action
-            </option>
-            <option value="export_csv">Export to CSV</option>
-            <option value="export_pdf">Export to PDF</option>
-            <option value="delete">Delete Selected</option>
-          </select>
-          <button className="action-button" onClick={handleAction}>
-            Go
-          </button>
-          <span>
-            {`${selectedItems.length} of ${data.nodes.length} Selected`}{" "}
-          </span>
-        </div>
-      </div>
-      <div style={{ overflow: "visible" }}>
-        <Table
-          data={filteredData}
-          theme={theme}
-          sort={sort}
-          layout={layout}
-          select={select}
-          pagination={pagination}
-        >
-          {/* function as child of table component */}
-          {(tableList) => (
-            <>
-              <Header>
-                <HeaderRow>
-                  <HeaderCellSelect />
+            {(tableList) => (
+              <>
+                <Header>
+                  <HeaderRow className="bg-gray-100">
+                    <HeaderCellSelect />
 
-                  {columns.map((column, index) => (
-                    <HeaderCell resize={resize} key={index}>
-                      <MaterialButton
-                        fullWidth
-                        style={{ justifyContent: "flex-start" }}
-                        endIcon={getIcon(column.label)}
-                        onClick={() =>
-                          sort.fns.onToggleSort({
-                            sortKey: column.label,
-                          })
-                        }
-                      >
-                        {column.label}
-                      </MaterialButton>
-                    </HeaderCell>
-                  ))}
-                </HeaderRow>
-              </Header>
-              <Body>
-                {tableList.map((item) => (
-                  <Row key={item.id} item={item}>
-                    <CellSelect item={item} />
-
-                    {columns.map((column, colIndex) => (
-                      <Cell key={colIndex}>{column.renderCell(item)}</Cell>
+                    {columns.map((column, index) => (
+                      <HeaderCell resize={resize} key={index}>
+                        <button
+                          className="w-full flex justify-start items-center gap-1 font-medium text-sm text-left"
+                          onClick={() =>
+                            sort.fns.onToggleSort({ sortKey: column.label })
+                          }
+                        >
+                          {column.label}
+                          {getIcon(column.label)}
+                        </button>
+                      </HeaderCell>
                     ))}
-                  </Row>
-                ))}
-              </Body>
-            </>
-          )}
-        </Table>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "16px",
-          }}
-        >
-          <span>
-            Total Pages: {pagination.state.getTotalPages(filteredData.nodes)}
-          </span>
+                  </HeaderRow>
+                </Header>
 
-          <span>
-            Page:{" "}
-            {Array(pagination.state.getTotalPages(filteredData.nodes))
-              .fill()
-              .map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  style={{
-                    fontWeight:
-                      pagination.state.page === index ? "bold" : "normal",
-                    margin: "0 4px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                    border: "1px solid #ccc",
-                    borderRadius: "4px",
-                    backgroundColor:
-                      pagination.state.page === index ? "lightblue" : "#fff",
-                  }}
-                  onClick={() => pagination.fns.onSetPage(index)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-          </span>
+                <Body>
+                  {tableList.map((item) => (
+                    <Row key={item.id} item={item} className="hover:bg-gray-50">
+                      <CellSelect item={item} />
+                      {columns.map((column, colIndex) => (
+                        <Cell key={colIndex} className="text-sm">
+                          {column.renderCell(item)}
+                        </Cell>
+                      ))}
+                    </Row>
+                  ))}
+                </Body>
+              </>
+            )}
+          </Table>
+
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4 text-sm">
+            <span>
+              Total Pages: {pagination.state.getTotalPages(filteredData.nodes)}
+            </span>
+
+            <div className="flex items-center gap-1">
+              Page:
+              {Array(pagination.state.getTotalPages(filteredData.nodes))
+                .fill()
+                .map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`px-2 py-1 border rounded ${
+                      pagination.state.page === index
+                        ? "font-bold bg-blue-100 border-blue-400"
+                        : "bg-white border-gray-300"
+                    }`}
+                    onClick={() => pagination.fns.onSetPage(index)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+            </div>
+          </div>
         </div>
       </div>
     </>
