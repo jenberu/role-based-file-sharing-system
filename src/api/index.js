@@ -1,6 +1,5 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Mutex } from "async-mutex";
-import { useNavigate } from "react-router-dom";
 const mutex = new Mutex();
 
 const createBaseQueryWithReauth = (baseUrl) => {
@@ -8,6 +7,7 @@ const createBaseQueryWithReauth = (baseUrl) => {
     baseUrl,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("accessToken");
+      console.log("Current token:", token);
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -24,7 +24,6 @@ const createBaseQueryWithReauth = (baseUrl) => {
     if (result.error && result.error.status === 401) {
       if (!mutex.isLocked()) {
         const release = await mutex.acquire();
-        const navigate = useNavigate();
 
         try {
           const refreshToken = localStorage.getItem("refreshToken");
@@ -57,14 +56,14 @@ const createBaseQueryWithReauth = (baseUrl) => {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("currUser");
-            navigate("/login");
+            window.location.href = "/login";
           }
         } catch (error) {
           console.error("Refresh token error:", error);
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("currUser");
-          navigate("/login");
+          window.location.href = "/login";
         } finally {
           release();
         }
