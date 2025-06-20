@@ -4,7 +4,6 @@ import { useLocalStorage } from "../../hooks/useLocalStirage";
 import { useState, useEffect } from "react";
 import NotificationModal from "../modals/notifications";
 import { toast } from "react-toastify";
-
 const Sidebar = ({ role }) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -73,13 +72,6 @@ const Sidebar = ({ role }) => {
               >
                 <FiUsers size={24} />
                 <span className="text-xl">Employees</span>
-              </Link>
-
-              <Link
-                to="/admin/add_employee"
-                className="ml-4 text-sm  text-white px-2 py-1 rounded"
-              >
-                + Add
               </Link>
             </div>
           )}

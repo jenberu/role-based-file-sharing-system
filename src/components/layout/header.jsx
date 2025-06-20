@@ -1,8 +1,30 @@
+/* eslint-disable no-unused-vars */
 // src/components/Header.jsx
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import TeamWorkLogo from "../../assets/teamwork_logo.jpg";
+import { useLazyGetMeQuery } from "../../api/auth";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [triggerGetMe] = useLazyGetMeQuery();
+
+  const handleEmployeeLogin = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await triggerGetMe().unwrap(); // Calls /me/ endpoint
+      navigate("/dashboard"); // Token valid
+    } catch (error) {
+      navigate("/login"); // Invalid or expired token
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-sm">
       <div className="px-4">
@@ -18,18 +40,20 @@ const Header = () => {
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800"
+            <button
+              onClick={handleEmployeeLogin}
+              className="px-4 py-2 text-2xl font-medium cursor-pointer text-blue-600 hover:text-blue-800"
             >
-              Employee Login
-            </Link>
-            <Link
-              to="/help"
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800"
+              Login
+            </button>
+            <a
+              href="https://my-portfolio-8cmi.onrender.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2  text-blue-600 text-2xl font-medium  hover:text-gray-800"
             >
-              Help Center
-            </Link>
+              about developer
+            </a>
           </div>
         </div>
       </div>
