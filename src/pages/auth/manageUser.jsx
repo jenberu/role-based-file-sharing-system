@@ -117,10 +117,6 @@ const ManageUser = () => {
       label: "Created At",
       renderCell: (item) => formatDate(item.date_joined),
     },
-    {
-      label: "Last Login",
-      renderCell: (item) => formatDate(item.last_login),
-    },
   ];
   if (isLoading) {
     return (
@@ -145,7 +141,7 @@ const ManageUser = () => {
           onClick={handleAddUser}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center cursor-pointer"
         >
-          Add User <span className="text-xl ml-2">+</span>
+          Add Employee <span className="text-xl ml-2">+</span>
         </button>
       </div>
 

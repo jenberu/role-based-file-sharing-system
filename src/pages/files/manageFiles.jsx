@@ -8,14 +8,15 @@ import FileFilter from "../../components/filters/fileFilter";
 import UploadFileModal from "../../components/modals/uploadFileModal";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DocumentViewer from "../../components/files/DocumentViewer";
-
+import { useLocalStorage } from "../../hooks/useLocalStirage";
 const ManageFile = () => {
   const [showUploadFile, setShowUploadFile] = useState(false);
   const navigate = useNavigate();
   const { data: files, isLoading, error } = useGetDocumentsQuery();
   const [filteredFiles, setFilteredFiles] = useState([]);
   const [currentViewingFile, setCurrentViewingFile] = useState(null); // Track which file is being viewed
-
+  const { getItem: currUser } = useLocalStorage("currUser");
+  const currentUser = currUser();
   useEffect(() => {
     if (files && files.length) {
       setFilteredFiles(files);
@@ -34,28 +35,37 @@ const ManageFile = () => {
     // Filter by uploaded date
     if (filters.uploadedDate && filters.uploadedDate !== "Any date") {
       const today = new Date();
-      let targetDate = new Date();
+      let startDate = null;
+
       switch (filters.uploadedDate) {
         case "Today":
-          targetDate.setDate(today.getDate() - 1);
+          startDate = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+          );
           break;
+
         case "Past 7 days":
-          targetDate.setDate(today.getDate() - 7);
+          startDate = new Date(today);
+          startDate.setDate(today.getDate() - 7);
           break;
+
         case "This month":
-          targetDate.setMonth(today.getMonth() - 1);
+          startDate = new Date(today.getFullYear(), today.getMonth(), 1);
           break;
+
         case "This year":
-          targetDate.setFullYear(today.getFullYear() - 1);
+          startDate = new Date(today.getFullYear(), 0, 1);
           break;
+
         default:
-          targetDate = null;
           break;
       }
 
-      if (targetDate) {
+      if (startDate) {
         filtered = filtered.filter(
-          (file) => new Date(file.uploaded_at) >= targetDate
+          (file) => new Date(file.uploaded_at) >= startDate
         );
       }
     }
@@ -93,7 +103,13 @@ const ManageFile = () => {
       ),
     },
     { label: "Category", renderCell: (item) => item.category },
-    { label: "Uploaded_by", renderCell: (item) => item.uploaded_by.username },
+    {
+      label: "Uploaded_by",
+      renderCell: (item) =>
+        item.uploaded_by.username === currentUser.username
+          ? "You"
+          : item.uploaded_by.username,
+    },
     {
       label: "Department",
       renderCell: (item) => item.department.name || "N/A",
@@ -106,10 +122,7 @@ const ManageFile = () => {
       label: "UploadedAt",
       renderCell: (item) => formatDate(item.uploaded_at),
     },
-    {
-      label: "UpdatedAt",
-      renderCell: (item) => formatDate(item.updated_at),
-    },
+   
     {
       label: "File",
       renderCell: (item) => {

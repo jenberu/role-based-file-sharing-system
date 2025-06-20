@@ -8,12 +8,10 @@ import { useLoginMutation } from "../../api/auth";
 import { useLocalStorage } from "../../hooks/useLocalStirage"; // adjust path if needed
 import { useState } from "react";
 import { toast } from "react-toastify";
-
 const Login = () => {
   const navigate = useNavigate();
   const [login, { isLoading }] = useLoginMutation();
   const { setItem: setCurrentUser } = useLocalStorage("currUser");
-
   const [error, setError] = useState("");
 
   const initialValues = {
