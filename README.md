@@ -13,13 +13,21 @@ This is the frontend application for the **Role-Based File Sharing System for Te
 
 ## 📁 Folder Structure
 
+![alt text](image-6.png)
+
 src/
 ├── api/ # RTK query slices for backend interaction
+
 ├── auth/ # Auth context & protected routes
+
 ├── components/ # Shared UI components
+
 ├── features/ # Redux features per domain (auth, files, users)
+
 ├── pages/ # Page components (Login, Dashboard, Upload, etc.)
+
 ├── utils/ # Helper functions (e.g., formatters, auth handlers)
+
 └── App.js # Main app routing
 
 ## 🚀 Getting Started
@@ -32,8 +40,11 @@ src/
 ### Installation
 
 git clone https://github.com/jenberu/role-based-file-sharing-system.git
+
 cd rbfs_frontend
+
 npm install
+
 Run Development Server
 
 npm run dev
