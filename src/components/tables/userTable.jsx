@@ -25,9 +25,13 @@ import { TABLETHEME } from "../../utils/TableThem";
 import { toast } from "react-toastify";
 import { exportToCSV, exportToPDF } from "../../utils/exportUtils";
 import { formatDate } from "../../utils/format";
+import DeleteConfirmationModal from "../modals/deleteConfirmationModal";
+import { useDeleteUsersMutation } from "../../api/auth";
 const UserTable = ({ data, columns }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteUsers, { isLoading: isDeleting }] = useDeleteUsersMutation();
   const [action, setAction] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const select = useRowSelect(
     data,
     {
@@ -107,7 +111,7 @@ const UserTable = ({ data, columns }) => {
 
         exportToPDF(pdfdata, head, "Users");
       } else if (action === "delete") {
-        deleteSelectedItems();
+        setIsDeleteDialogOpen(true);
       }
     } else {
       toast.warning("Please select an action.");
@@ -117,11 +121,15 @@ const UserTable = ({ data, columns }) => {
     setAction("");
   };
 
-  const deleteSelectedItems = () => {
-    alert(
-      "Deleting selected items: " +
-        selectedItems.map((item) => item.username).join(", ")
-    );
+  const handleDeleteConfirmation = async () => {
+    try {
+      const ids = selectedItems.map((item) => item.id);
+      await deleteUsers(ids).unwrap();
+      toast.success("Selected users deleted successfully");
+      setIsDeleteDialogOpen(false);
+    } catch (err) {
+      toast.error(err?.data?.detail || "Failed to delete users");
+    }
   };
 
   const getIcon = (sortKey) => {
@@ -218,7 +226,7 @@ const UserTable = ({ data, columns }) => {
             </select>
             <button
               onClick={handleAction}
-              className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white cursor-pointer px-4 py-1 rounded hover:bg-blue-700 transition"
             >
               Go
             </button>
@@ -304,6 +312,13 @@ const UserTable = ({ data, columns }) => {
           </div>
         </div>
       </div>
+      <DeleteConfirmationModal
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteConfirmation}
+        isLoading={isDeleting}
+        title="User"
+      />
     </>
   );
 };

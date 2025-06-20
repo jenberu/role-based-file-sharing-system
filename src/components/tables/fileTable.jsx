@@ -21,20 +21,11 @@ import {
 } from "@table-library/react-table-library/select";
 import { usePagination } from "@table-library/react-table-library/pagination";
 import { useDeleteDocumentsMutation } from "../../api/fileApi";
-
+import Tooltip from "@mui/material/Tooltip";
+import { Typography } from "@mui/material";
 import { TABLETHEME } from "../../utils/TableThem";
 import { toast } from "react-toastify";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from "../ui/dialog";
-import { AlertTriangle } from "lucide-react";
+import DeleteConfirmationModal from "../modals/deleteConfirmationModal";
 const FileTable = ({ data, columns }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -166,7 +157,7 @@ const FileTable = ({ data, columns }) => {
       },
     }
   );
-  const resize = { minWidth: 40, resizerHighlight: "#dde2eb" };
+  const resize = { minWidth: 100, resizerHighlight: "#dde2eb" };
 
   return (
     <>
@@ -211,7 +202,7 @@ const FileTable = ({ data, columns }) => {
             </select>
             <button
               onClick={handleAction}
-              className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white cursor-pointer px-4 py-1 rounded hover:bg-blue-700 transition"
             >
               Go
             </button>
@@ -222,7 +213,7 @@ const FileTable = ({ data, columns }) => {
         </div>
 
         {/* Table */}
-        <div className="overflow-visible mt-4">
+        <div className="overflow-x-auto mt-4">
           <Table
             data={filteredData}
             theme={theme}
@@ -258,8 +249,49 @@ const FileTable = ({ data, columns }) => {
                     <Row key={item.id} item={item} className="hover:bg-gray-50">
                       <CellSelect item={item} />
                       {columns.map((column, colIndex) => (
-                        <Cell key={colIndex} className="text-sm">
-                          {column.renderCell(item)}
+                        <Cell
+                          key={colIndex}
+                          style={{
+                            padding: "8px 16px", // Adjust cell padding
+                            verticalAlign: "middle", // Center content vertically
+                            borderBottom: "1px solid #e0e0e0", // Add subtle border
+                          }}
+                        >
+                          <Tooltip
+                            title={column.renderCell(item)}
+                            placement="top"
+                            arrow
+                            componentsProps={{
+                              tooltip: {
+                                sx: {
+                                  bgcolor: "#333", // Dark background
+                                  color: "#fff", // White text
+                                  fontSize: "0.875rem", // 14px
+                                  maxWidth: 400, // Maximum tooltip width
+                                  boxShadow: "0px 2px 10px rgba(0,0,0,0.2)", // Subtle shadow
+                                  "& .MuiTooltip-arrow": {
+                                    color: "#333", // Match tooltip background
+                                  },
+                                },
+                              },
+                            }}
+                          >
+                            <Typography
+                              noWrap
+                              sx={{
+                                maxWidth: column.maxWidth || 200, // Column-specific widths
+                                fontSize: "0.875rem", // 14px
+                                color: "text.primary", // Use theme text color
+                                lineHeight: 1.5, // Better line spacing
+                                transition: "all 0.2s ease", // Smooth hover effects
+                                "&:hover": {
+                                  color: "primary.main", // Change color on hover
+                                },
+                              }}
+                            >
+                              {column.renderCell(item)}
+                            </Typography>
+                          </Tooltip>
                         </Cell>
                       ))}
                     </Row>
@@ -297,34 +329,14 @@ const FileTable = ({ data, columns }) => {
           </div>
         </div>
       </div>
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="max-w-md bg-amber-50 ">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 mb-3">
-              {" "}
-              <AlertTriangle className="text-yellow-500 w-5 h-5" />
-              Confirm Deletion{" "}
-            </DialogTitle>{" "}
-            <DialogDescription>
-              Are you sure you want to delete selected document(s)? This action
-              cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex justify-end gap-4">
-            <DialogClose asChild>
-              <button className="mr-2 cursor-pointer">Cancel</button>
-            </DialogClose>
-            <button
-              onClick={handleDeleteConfirmation}
-              disabled={isDeleting}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+       {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteConfirmation}
+        isLoading={isDeleting}
+        title="Document"
+      />
     </>
   );
 };

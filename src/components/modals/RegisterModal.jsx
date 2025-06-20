@@ -43,7 +43,8 @@ export default function RegisterModal({ onClose }) {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      await register(values).unwrap();
+      const data = { ...values }; 
+      await register(data).unwrap();
       toast.success("Registration successful!");
       onClose();
     } catch (err) {
@@ -190,7 +191,11 @@ export default function RegisterModal({ onClose }) {
               <button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className="bg-blue-600 cursor-pointer text-white py-2 px-4 rounded hover:bg-blue-700"
+                className={`bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 ${
+                  isSubmitting || isLoading
+                    ? "cursor-not-allowed opacity-70"
+                    : "cursor-pointer"
+                }`}
               >
                 {isSubmitting || isLoading ? "Registering..." : "Register"}
               </button>
