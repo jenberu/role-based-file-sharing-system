@@ -61,6 +61,14 @@ export const authApi = createApi({
       query: () => "/total-users/",
       providesTags: ["User"],
     }),
+    deleteUsers: builder.mutation({
+      query: (userIds) => ({
+        url: "/delete-users/",
+        method: "DELETE",
+        body: { ids: userIds },
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -68,8 +76,11 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetMeQuery,
+  useLazyGetMeQuery,
   useLogoutMutation,
   useGetUsersQuery,
   useChangePasswordMutation,
   useGetTotalUsersQuery,
+  useDeleteUsersMutation,
+
 } = authApi;
