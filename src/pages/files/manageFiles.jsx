@@ -31,6 +31,12 @@ const ManageFile = () => {
         (u) => u.category?.toLowerCase() === filters.category.toLowerCase()
       );
     }
+    // Filter by department
+    if (filters.department && filters.department !== "All") {
+      filtered = filtered.filter(
+        (u) => u.department?.name?.toLowerCase() === filters.department.toLowerCase()
+      );
+    }
 
     // Filter by uploaded date
     if (filters.uploadedDate && filters.uploadedDate !== "Any date") {
