@@ -20,7 +20,7 @@ const DashboardLayout = () => {
       <Navbar />
       <div className="flex flex-1 pt-16">
         <Sidebar role={user?.role} />
-        <main className="flex-1 ml-64 p-6 bg-gray-50 min-h-[calc(100vh-4rem)]">
+        <main className="flex-1 overflow-auto ml-64 p-6 bg-gray-50 min-h-[calc(100vh-4rem)]">
           <Outlet />
         </main>
       </div>

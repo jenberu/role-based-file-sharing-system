@@ -15,7 +15,7 @@ const Footer = () => {
               className="h-40 w-full rounded-lg  shadow-md"
             />
             <p className="text-gray-400 text-base">
-              Internal document sharing platform for TeamWork Company employees.
+              Internal document sharing platform for TeamWork IT Solution Company employees.
             </p>
           </div>
 
@@ -60,7 +60,7 @@ const Footer = () => {
 
         <div className="mt-12 pb-4 border-t border-gray-700 pt-8">
           <p className="text-xl text-gray-400 text-center">
-            &copy; {new Date().getFullYear()} TeamWork Company. For internal use only.
+            &copy; {new Date().getFullYear()} TeamWork IT Solution. For internal use only.
           </p>
         </div>
       </div>
