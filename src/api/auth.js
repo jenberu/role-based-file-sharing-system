@@ -3,7 +3,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import createBaseQueryWithReauth from "./index";
 
 const baseQueryWithReauth = createBaseQueryWithReauth(
-  "https://rrbfs-backend-production.up.railway.app/api/auth"
+  "https://rrbfs-backend.onrender.com/api/auth"
 );
 
 export const authApi = createApi({
