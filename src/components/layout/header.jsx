@@ -50,14 +50,7 @@ const Header = () => {
             >
               Login
             </button>
-            <a
-              href="https://my-portfolio-8cmi.onrender.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2  text-blue-600 text-2xl font-medium  hover:text-gray-800"
-            >
-              about developer
-            </a>
+           
           </div>
         </div>
       </div>
